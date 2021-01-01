@@ -1,0 +1,86 @@
+<!DOCTYPE html5>
+<html lang="en">
+  <head>
+    <style>
+      body {
+	  background-color: darkblue;
+      }
+      .column {
+	  float: left;
+	  width: 50%;
+	  background-color: lightblue;
+	  padding: 5%;
+	  width: calc(39%);
+	  min-width: 25em;
+      }
+
+      .col2 {
+	  margin-left: 2%;
+      }
+
+      .row {
+	  margin-left: 15%;
+	  margin-right: 15%;
+	  margin-top: 5%;
+      }
+      
+      .row:after {
+	  content: "";
+	  display: table;
+	  clear: both;
+      }
+
+      #charactertable {
+	  margin: 10px;
+	  max-height: 100%;
+	  overflow-y: auto;
+      }
+    </style>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.0/FileSaver.min.js"></script>
+    <script type="text/javascript" src="/index.js"></script>
+  </head>
+  <body>
+    <div class="row">
+      <div class="column col1">
+	<div id="apploading">
+	  <span>Loading app...</span>
+	</div>
+	<div class="appcontent" style="display:none">
+	  <div id="upload">
+	    <div id="failedupload" style="display:none">
+	      <span>Upload failed, try again?</span>
+	      <br /><br />
+	    </div>
+	    <span>Upload objection.lol export: </span>
+	    <input type="file" id="input"></input>
+	  </div>
+	  <div class="uploaded" style="display:none">
+	    <span>Objection loaded.</span>
+	    <br /><br />
+	    <span><span id="numscenes"></span> scenes loaded.</span>
+	    <br /><br />
+	    <span>Export objection:</span>
+	    <button id="export" type="button">Export</button>
+	  </div>
+	</div>
+      </div>
+      <div class="column col2">
+	<div class="uploaded" style="display:none">
+	  <table id="chartable">
+	    <thead>
+	      <tr>
+		<th>Side</th>
+		<th>Character</th>
+		<th>Nickname</th>
+	      </tr>
+	    </thead>
+	    <tbody>
+	    </tbody>
+	  </table>
+	</div>
+	<span id="mappingerror" style="display:none">
+	  Character mapping missing, please open a github issue or contact me.
+	</span>
+      </div>
+  </body>
+</html>
