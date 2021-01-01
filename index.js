@@ -123,7 +123,7 @@ async function parseCharacterTable() {
     return charNicks;
 }
 
-fetch("/mapping.json", { headers: { "Content-Type": "application/json; charset=utf-8" }})
+fetch("mapping.json", { headers: { "Content-Type": "application/json; charset=utf-8" }})
     .then(res => res.json())
     .then(mappings => {
 	let idMap = [];
