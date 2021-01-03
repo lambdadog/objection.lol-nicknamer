@@ -48,7 +48,7 @@ async function loadObjection(idMap, fileContent, objName) {
 		characters.push(chr);
 	    }
 	}
-
+	
 	// Build the character nickname table
 	const table = document.getElementById("chartable")
 	characters.map(chr => {
@@ -65,12 +65,9 @@ async function loadObjection(idMap, fileContent, objName) {
 	const nickAndExport = (idMap, objection, objName) => async () => {
 	    const charNicks = await parseCharacterTable();
 
-	    console.log(charNicks);
-
 	    const newObjection = objection.map(scene => {
 		try {
 		    let {side, name} = idMap[scene.poseId];
-		    console.log(side,name);
 		    if (charNicks[side] != undefined && charNicks[side][name] != undefined) {
 			return {...scene, username: charNicks[side][name]};
 		    } else {
@@ -90,18 +87,15 @@ async function loadObjection(idMap, fileContent, objName) {
 	document.getElementById("export")
 	    .addEventListener("click", nickAndExport(idMap, objection, objName), "false");
 
-	// Show everything
-	const tableDiv = document.getElementById("charactertable");
-	tableDiv.scrollTop = 0;
-	tableDiv.style.display = "block";
-
 	//Show off a little, to prove we're doing something.
 	document.getElementById("numscenes").innerHTML = objection.length;
-	
+
+	// Show everything
 	document.getElementById("upload").style.display = "none";
 	Array.from(document.getElementsByClassName("uploaded")).map(el => {
 	    el.style.display = "block";
 	});
+
     } catch {
 	// reset the input field and inform user about failed upload
 	document.getElementById("input").value = null;
