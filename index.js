@@ -2,30 +2,31 @@ async function ready(idMap) {
     const inputField = document.getElementById("input");
     inputField.value = null; //unset this
     
-    document.getElementById("apploading").style.display = "none";
-    Array.from(document.getElementsByClassName("appcontent")).map(el => {
-	el.style.display = "block";
-    });
-    
     const handleObjection = idMap => () => {
+	// in a strange application state this could theoretically
+	// happen, I guess.. I didn't model this in TLA+ or anything
 	if (inputField.files.length === 0) { return; }
 	
 	const file = inputField.files[0];
 	const reader = new FileReader();
+	
 	reader.onload = event => {
-	    console.log(inputField.value);
 	    const fileName = new String(inputField.value)
 		  .substring(inputField.value.lastIndexOf('/') + 1)
 		  .substring(inputField.value.lastIndexOf('\\') + 1);
-	    console.log(fileName);
 	    const basename = fileName.substring(0, fileName.lastIndexOf("."));
-	    console.log(basename);
 	    loadObjection(idMap, event.target.result, basename);
 	};
 	reader.readAsText(file);
     };
     
     inputField.addEventListener("change", handleObjection(idMap), false);
+
+    // ready for input
+    document.getElementById("apploading").style.display = "none";
+    Array.from(document.getElementsByClassName("appcontent")).map(el => {
+	el.style.display = "block";
+    });
 }
 
 async function loadObjection(idMap, fileContent, objName) {
@@ -39,16 +40,26 @@ async function loadObjection(idMap, fileContent, objName) {
 	    if (chr === undefined) {
 		document.getElementById("mappingerror").style.display = "block";
 	    } else if (characters.find(el => el.name === chr.name && el.side === chr.side) === undefined) {
+		// theoretically, the undefined check is unnecessary,
+		// but I should move it to error reporting, as it's an
+		// error in mapping.json if different characters have
+		// the same pose IDs
+		
 		characters.push(chr);
 	    }
 	}
 
-	//Show off a little, to prove we're doing something.
-	document.getElementById("numscenes").innerHTML = objection.length;
-	
-	document.getElementById("upload").style.display = "none";
-	Array.from(document.getElementsByClassName("uploaded")).map(el => {
-	    el.style.display = "block";
+	// Build the character nickname table
+	const table = document.getElementById("chartable")
+	characters.map(chr => {
+	    let row = table.insertRow();
+	    for (key in chr) {
+		let cell = row.insertCell();
+		cell.appendChild(document.createTextNode(chr[key]));
+	    }
+	    let inputField = document.createElement("input");
+	    inputField.setAttribute("type", "text");
+	    row.insertCell().appendChild(inputField);
 	});
 
 	const nickAndExport = (idMap, objection, objName) => async () => {
@@ -79,22 +90,20 @@ async function loadObjection(idMap, fileContent, objName) {
 	document.getElementById("export")
 	    .addEventListener("click", nickAndExport(idMap, objection, objName), "false");
 
-	//console.log(characters);
-	const table = document.getElementById("chartable")
-	characters.map(chr => {
-	    let row = table.insertRow();
-	    for (key in chr) {
-		let cell = row.insertCell();
-		cell.appendChild(document.createTextNode(chr[key]));
-	    }
-	    let inputField = document.createElement("input");
-	    inputField.setAttribute("type", "text");
-	    row.insertCell().appendChild(inputField);
-	});
+	// Show everything
 	const tableDiv = document.getElementById("charactertable");
 	tableDiv.scrollTop = 0;
 	tableDiv.style.display = "block";
+
+	//Show off a little, to prove we're doing something.
+	document.getElementById("numscenes").innerHTML = objection.length;
+	
+	document.getElementById("upload").style.display = "none";
+	Array.from(document.getElementsByClassName("uploaded")).map(el => {
+	    el.style.display = "block";
+	});
     } catch {
+	// reset the input field and inform user about failed upload
 	document.getElementById("input").value = null;
 	document.getElementById("failedupload").style.display = "block";
     }
@@ -123,6 +132,9 @@ async function parseCharacterTable() {
     return charNicks;
 }
 
+// We don't need to wait for the document to load to execute this, as
+// DOM events will wait until then regardless, and the user is waiting
+// on the app to click a button to drive the rest of the app
 fetch("mapping.json", { headers: { "Content-Type": "application/json; charset=utf-8" }})
     .then(res => res.json())
     .then(mappings => {
