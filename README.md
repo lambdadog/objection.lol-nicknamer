@@ -1,3 +1,9 @@
+# THIS PROJECT IS CURRENTLY BROKEN
+
+Objection.lol has changed the format they save their objections in,
+therefore Objection.lol Nicknamer just throws errors. When I find time
+I'll do a deep dive and attempt to fix it.
+
 # Objection.lol Nicknamer
 
 A scrappy and hacked together nicknamer for objection.lol that lets
